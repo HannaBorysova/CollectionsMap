@@ -1,5 +1,6 @@
 package main.java.com.borysova.map;
 
+import java.util.Arrays;
 import java.util.Objects;
 
 public class MyHashMap<K, V> {
@@ -93,32 +94,25 @@ public class MyHashMap<K, V> {
         return null;
     }
 
-    public Entry<K, V> remove(K key) {
+    public void remove(K key) {
         int hash = key.hashCode() % CAPACITY;
         Entry<K, V> e = table[hash];
         if (e.getKey() == key) {
             table[hash] = e.next;
             e.next = null;
-            return e;
         }
         Entry<K, V> prev = e;
         e = e.next;
-
         while (e != null) {
             if (e.getKey() == key) {
                 prev.next = e.next;
             }
         }
-        return null;
     }
 
     public void clear() {
-        Entry<K, V>[] t;
-        if ((t = table) != null && size > 0) {
-            size = 0;
-            for (int i = 0; i < t.length; ++i)
-                t[i] = null;
-        }
+        size = 0;
+        Arrays.fill(table, null);
     }
 
     public void printMyHashMap() {

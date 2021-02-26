@@ -10,9 +10,8 @@ public class MyQueue<T> {
         private T element;
         private Node<T> next;
 
-        public Node(T e, Node<T> n) {
+        public Node(T e) {
             element = e;
-            next = n;
         }
 
         public T getElement() {
@@ -25,11 +24,6 @@ public class MyQueue<T> {
 
         public void setNext(Node<T> n) {
             next = n;
-        }
-
-        @Override
-        public String toString() {
-            return "" + element + " " + next;
         }
     }
 
@@ -45,7 +39,7 @@ public class MyQueue<T> {
     }
 
     public void add(T e) {
-        Node<T> newNode = new Node<>(e, null);
+        Node<T> newNode = new Node<>(e);
         if (isEmpty()) {
             head = newNode;
         } else {
@@ -53,8 +47,6 @@ public class MyQueue<T> {
         }
         tail = newNode;
         size++;
-        System.out.println("Added tail node with '" +
-                tail.getElement() + "' element.");
     }
 
     public T peek() {
@@ -73,13 +65,11 @@ public class MyQueue<T> {
             head = head.next;
             size--;
             if (head == null) tail = null;
-            System.out.println("Removed head node with '"
-                    + temp.element + "' element.");
             return temp.element;
         }
     }
 
-    public T removeLast() {
+    private T removeLast() {
         if (size == 0) return null;
         else if (size == 1) {
             Node<T> temp = head;
@@ -98,10 +88,16 @@ public class MyQueue<T> {
         }
     }
 
-    public T remove(int index) {
-        if (index < 0 || index >= size) return null;
-        else if (index == 0) return poll();
-        else if (index == size - 1) return removeLast();
+    public void remove(int index) {
+        if (index < 0 || index >= size) {
+            System.out.println("This index is not exist");
+        }
+        else if (index == 0) {
+            poll();
+        }
+        else if (index == size - 1) {
+            removeLast();
+        }
         else {
             Node<T> previous = head;
             for (int i = 1; i < index; i++) {
@@ -110,7 +106,6 @@ public class MyQueue<T> {
             Node<T> current = previous.next;
             previous.next = current.next;
             size--;
-            return current.element;
         }
     }
 
@@ -120,9 +115,12 @@ public class MyQueue<T> {
         size = 0;
     }
 
-    @Override
-    public String toString() {
-        return " " + head;
+    public void printQ(){
+        Node<T> temp = head;
+        while(temp != null){
+            System.out.println(temp.element);
+            temp = temp.next;
+        }
     }
 }
 
@@ -132,11 +130,11 @@ class MyQueueTest {
         stringMyQ.add("a");
         stringMyQ.add("b");
         stringMyQ.add("c");
-        System.out.println(stringMyQ);
+        stringMyQ.printQ();
         System.out.println("Size - " + stringMyQ.size());
 
-        System.out.println("Element should to remove - "
-                + stringMyQ.remove(0));
+        stringMyQ.remove(0);
+        stringMyQ.printQ();
         System.out.println("Size after removing - " + stringMyQ.size());
 
         System.out.println("First element - " + stringMyQ.peek());
@@ -144,7 +142,7 @@ class MyQueueTest {
         System.out.println("First element to remove - " + stringMyQ.poll());
         System.out.println("Size after poll - " + stringMyQ.size());
 
-        System.out.println(stringMyQ);
+        stringMyQ.printQ();
 
         stringMyQ.clear();
         System.out.println("Size after clear - " + stringMyQ.size());

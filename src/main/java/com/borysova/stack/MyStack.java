@@ -1,10 +1,17 @@
 package main.java.com.borysova.stack;
 
+import main.java.com.borysova.queue.MyQueue;
+
 public class MyStack<T> {
+
+    private Node<T> head = null;
+    private Node<T> tail = null;
+    private int size = 0;
 
     private static class Node<T> {
         private T element;
         private Node<T> next;
+        private Node<T> prev;
 
         public Node(T e) {
             element = e;
@@ -22,14 +29,19 @@ public class MyStack<T> {
             next = n;
         }
 
-        @Override
-        public String toString() {
-            return element + " " + next;
+        public void setElement(T element) {
+            this.element = element;
+        }
+
+        public Node<T> getPrev() {
+            return prev;
+        }
+
+        public void setPrev(Node<T> prev) {
+            prev = prev;
         }
     }
 
-    private Node<T> nodeElement = null;
-    private int size = 0;
     public MyStack() {
     }
 
@@ -43,8 +55,12 @@ public class MyStack<T> {
 
     public void push(T e) {
         Node<T> newNode = new Node<>(e);
-        newNode.setNext(nodeElement);
-        nodeElement = newNode;
+        if (isEmpty()) {
+            head = newNode;
+        } else {
+            tail.setNext(newNode);
+        }
+        tail = newNode;
         size++;
     }
 
@@ -52,45 +68,97 @@ public class MyStack<T> {
         if (isEmpty()) {
             return null;
         }
-        return nodeElement.getElement();
+        return tail.getElement();
     }
 
     public T pop() {
+        if (size == 0) return null;
+        else if (size == 1) {
+            Node<T> temp = head;
+            head = tail = null;
+            size = 0;
+            return temp.element;
+        } else {
+            Node<T> current = head;
+            for (int i = 0; i < size - 2; i++)
+                current = current.next;
+            Node<T> temp = tail;
+            tail = current;
+            tail.next = null;
+            size--;
+            return temp.element;
+        }
+    }
+
+    private T removeFirst() {
         if (isEmpty()) {
             return null;
-        } else {
-            Node<T> myNode = nodeElement.getNext();
+        }
+        else {
+            Node<T> temp = head;
+            head = head.next;
             size--;
-            return (T) nodeElement.getElement();
+            if (head == null) tail = null;
+            return temp.element;
+        }
+    }
+
+    public void remove(int index) {
+        if (index < 0 || index >= size) {
+            System.out.println("This index is not exist");
+        }
+        else if (index == 0) {
+            removeFirst();
+        }
+        else if (index == size - 1) {
+            pop();
+        }
+        else {
+            Node<T> previous = head;
+            for (int i = 1; i < index; i++) {
+                previous = previous.next;
+            }
+            Node<T> current = previous.next;
+            previous.next = current.next;
+            size--;
         }
     }
 
     public void clear() {
-        nodeElement = null;
+        tail = null;
+        head = null;
         size = 0;
     }
 
-    @Override
-    public String toString() {
-        return "" + nodeElement;
+    public void printMyStack(){
+        Node<T> temp = head;
+        while(temp != null){
+            System.out.println(temp.element);
+            temp = temp.next;
+        }
     }
 }
 
-class MyStackTester {
+class MyStackTest {
     public static void main(String[] args) {
         MyStack <String> stringMyStack = new MyStack<>();
         stringMyStack.push("a");
         stringMyStack.push("b");
         stringMyStack.push("c");
-        System.out.println(stringMyStack);
+        stringMyStack.printMyStack();
         System.out.println("Size - " + stringMyStack.size());
 
-        System.out.println("Last element - " + stringMyStack.peek());
-        System.out.println("Last element to remove - " + stringMyStack.pop());
+        stringMyStack.remove(2);
+        stringMyStack.printMyStack();
 
-        System.out.println(stringMyStack.size());
+        System.out.println("First element as LIFO - " + stringMyStack.peek());
+        System.out.println("First element to remove as LIFO - "
+                + stringMyStack.pop());
+
+        stringMyStack.printMyStack();
+        System.out.println("Size after pop - " + stringMyStack.size());
 
         stringMyStack.clear();
-        System.out.println(stringMyStack.size());
+        System.out.println("Size after clear " + stringMyStack.size());
     }
 }
